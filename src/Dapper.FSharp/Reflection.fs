@@ -28,12 +28,12 @@ let getValuesForFields fields r =
     |> Array.map (fun p -> p.GetValue r)
     |> Array.toList
 
-let boxify (x : obj) =
+let rec boxify (x : obj) =
     match x with
     | null -> null
     | _ -> match x.GetType().GetProperty("Value") with
            | null -> x
-           | prop -> prop.GetValue(x)
+           | prop -> boxify (prop.GetValue(x))
 
 type ReflectiveListBuilder = 
         static member BuildList<'a> (args: obj list) = 
